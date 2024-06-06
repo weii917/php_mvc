@@ -14,7 +14,7 @@ $router = new Framework\Router;
 $router->add("/home/index", ["controller" => "home", "action" => "index"]);
 $router->add("/products", ["controller" => "products", "action" => "index"]);
 $router->add("/", ["controller" => "home", "action" => "index"]);
-
+// match 輸入的url是否匹配上述的$router->add
 $params = $router->match($path);
 
 if ($params === false) {
