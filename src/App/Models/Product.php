@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use PDO;
+
 class Product
 {
     public function getData(): array
