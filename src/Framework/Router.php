@@ -6,7 +6,7 @@ class Router
 {
     private array $routes = [];
 
-    public function add(string $path, array $params): void
+    public function add(string $path, array $params = []): void
     {
         $this->routes[] = [
             "path" => $path,
@@ -16,21 +16,41 @@ class Router
 
     public function match(string $path): array|bool
     {
-        $pattern = "#^/(?<controller>[a-z]+)/(?<action>[a-z]+)$#";
-        // new 給予範圍定義一定要有值輸入，使用preg_match的matches過濾需要的陣列僅包含controller及action
-        if (preg_match($pattern, $path, $matches)) {
-            // array過濾留下的key is string
-            $matches = array_filter($matches, "is_string", ARRAY_FILTER_USE_KEY);
-            // print_r($matches);
-            // exit("Match");
-            return $matches;
+        foreach ($this->routes as $route) {
+            $pattern = "#^/(?<controller>[a-z]+)/(?<action>[a-z]+)$#";
+
+            echo $pattern . "\n" . $route["path"] . "\n";
+
+            $this->getPatternFromRoutePath($route["path"]);
+
+            // 給予範圍定義一定要有值輸入，使用preg_match的matches過濾需要的陣列僅包含controller及action
+            if (preg_match($pattern, $path, $matches)) {
+                // array過濾留下的key is string
+                $matches = array_filter($matches, "is_string", ARRAY_FILTER_USE_KEY);
+                // print_r($matches);
+                // exit("Match");
+                return $matches;
+            }
         }
-        // 原本使用routes逐筆取得array 包含controller及action
-        // foreach ($this->routes as $route) {
-        //     if ($route["path"] === $path) {
-        //         return $route["params"];
-        //     }
-        // }
         return false;
+    }
+
+    private function getPatternFromRoutePath(string $route_path)
+    {
+        $route_path = trim($route_path, "/");
+
+        $segments = explode("/", $route_path);
+
+
+        $segments = array_map(function (string $segment): string {
+
+            preg_match("#^\{([a-z][a-z0-9]*)\}$#", $segment, $matches);
+
+            $segment = "(?<" . $matches[1] . ">)[a-z]+";
+
+            return $segment;
+        }, $segments);
+
+        print_r($segments);
     }
 }

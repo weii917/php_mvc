@@ -11,9 +11,10 @@ spl_autoload_register(function (string $class_name) {
 // 使用namespace方式而同時檔案位置也是跟namespace一樣路徑
 $router = new Framework\Router;
 
-$router->add("/home/index", ["controller" => "home", "action" => "index"]);
-$router->add("/products", ["controller" => "products", "action" => "index"]);
-$router->add("/", ["controller" => "home", "action" => "index"]);
+$router->add("/{controller}/{action}");
+// $router->add("/home/index", ["controller" => "home", "action" => "index"]);
+// $router->add("/products", ["controller" => "products", "action" => "index"]);
+// $router->add("/", ["controller" => "home", "action" => "index"]);
 // match 輸入的url是否匹配上述的$router->add
 $params = $router->match($path);
 
