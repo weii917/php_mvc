@@ -16,26 +16,28 @@ class Router
 
     public function match(string $path): array|bool
     {
+        $path = urldecode($path);
+        // echo $path;
+        // 初始都先將頭尾/去除，無論有無輸入都會匹配，才會到preg_match做處理
+        $path = trim($path, "/");
+
         foreach ($this->routes as $route) {
-            $pattern = "#^/(?<controller>[a-z]+)/(?<action>[a-z]+)$#";
 
-            echo $pattern . "\n" . $route["path"] . "\n";
+            $pattern = $this->getPatternFromRoutePath($route["path"]);
 
-            $this->getPatternFromRoutePath($route["path"]);
-
-            // 給予範圍定義一定要有值輸入，使用preg_match的matches過濾需要的陣列僅包含controller及action
+            // 給予範圍定義一定要有值輸入，使用preg_match與$pattern及$path做匹配得出$matches陣列
             if (preg_match($pattern, $path, $matches)) {
                 // array過濾留下的key is string
                 $matches = array_filter($matches, "is_string", ARRAY_FILTER_USE_KEY);
-                // print_r($matches);
-                // exit("Match");
-                return $matches;
+                // 其他沒有使用{}，還有第二參數的params需要再合併到matches，返回的參數才會有controller及action的陣列
+                $params = array_merge($matches, $route["params"]);
+                return $params;
             }
         }
         return false;
     }
 
-    private function getPatternFromRoutePath(string $route_path)
+    private function getPatternFromRoutePath(string $route_path): string
     {
         $route_path = trim($route_path, "/");
 
@@ -44,13 +46,21 @@ class Router
 
         $segments = array_map(function (string $segment): string {
 
-            preg_match("#^\{([a-z][a-z0-9]*)\}$#", $segment, $matches);
+            //判斷是否以{}此傳入的動態形式才會執行，而$matches才會有值否則會是空的會出錯
+            if (preg_match("#^\{([a-z][a-z0-9]*)\}$#", $segment, $matches)) {
 
-            $segment = "(?<" . $matches[1] . ">)[a-z]+";
+                return "(?<" . $matches[1] . ">[^/]*)";
+            }
+
+            if (preg_match("#^\{([a-z][a-z0-9]*):(.+)\}$#", $segment, $matches)) {
+
+                return "(?<" . $matches[1] . ">" . $matches[2] . ")";
+            }
 
             return $segment;
         }, $segments);
-
-        print_r($segments);
+        // add i，"$#i"，match this pattern ignoring the case of the letters
+        // add u match any Unicode character
+        return "#^" . implode("/", $segments) . "$#iu";
     }
 }
