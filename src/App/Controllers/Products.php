@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers;
 // 如果確定再根目錄前方無須\，使用use載入class就能使用該class
 use App\Models\Product;
@@ -7,13 +9,13 @@ use Framework\Viewer;
 
 class Products
 {
-    public function __construct(private Viewer $viewer,private Product $model)
+    public function __construct(private Viewer $viewer, private Product $model)
     {
     }
     public function index()
     {
         // 同個底下需再加\從根目錄開始查找
-    
+
         $products = $this->model->getData();
 
 

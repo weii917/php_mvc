@@ -4,14 +4,13 @@ namespace Framework;
 
 use ReflectionMethod;
 
-
-use ReflectionClass;
-
 class Dispatcher
 {
     // 直接在參數中建立private 並將參數指派給他
-    public function __construct(private Router $router)
-    {
+    public function __construct(
+        private Router $router,
+        private Container $container
+    ) {
     }
 
     public function handle($path)
@@ -28,7 +27,7 @@ class Dispatcher
         $controller = $this->getControllerName($params);
         // exit($action);
         // 實例化後的controller
-        $controller_object = $this->getObject($controller);
+        $controller_object = $this->container->get($controller);
 
         $args = $this->getActionArguments($controller, $action, $params);
 
@@ -69,26 +68,5 @@ class Dispatcher
     }
 
     // new ReflectionClass getobject to new class(Controller)
-    private function getObject(string $class_name): object
-    {
 
-        $reflector = new ReflectionClass($class_name);
-
-        $constructor = $reflector->getConstructor();
-
-        $dependencies = [];
-        if ($constructor === null) {
-
-            return new $class_name;
-        }
-
-        foreach ($constructor->getParameters() as $parameter) {
-            $type = (string)  $parameter->getType();
-            // 每一個得到的type class在執行一次得到當沒有$constructor === null將會new class
-            $dependencies[] = $this->getObject($type);
-        }
-
-
-       return new $class_name(...$dependencies);
-    }
 }
