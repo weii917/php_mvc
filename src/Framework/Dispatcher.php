@@ -4,6 +4,9 @@ namespace Framework;
 
 use ReflectionMethod;
 
+
+use ReflectionClass;
+
 class Dispatcher
 {
     // 直接在參數中建立private 並將參數指派給他
@@ -24,9 +27,8 @@ class Dispatcher
         $action = $this->getActionName($params);
         $controller = $this->getControllerName($params);
         // exit($action);
-
-
-        $controller_object = new $controller;
+        // 實例化後的controller
+        $controller_object = $this->getObject($controller);
 
         $args = $this->getActionArguments($controller, $action, $params);
 
@@ -64,5 +66,29 @@ class Dispatcher
         $action = $params['action'];
         $action = lcfirst(str_replace("-", "", ucwords(strtolower($action), "-")));
         return $action;
+    }
+
+    // new ReflectionClass getobject to new class(Controller)
+    private function getObject(string $class_name): object
+    {
+
+        $reflector = new ReflectionClass($class_name);
+
+        $constructor = $reflector->getConstructor();
+
+        $dependencies = [];
+        if ($constructor === null) {
+
+            return new $class_name;
+        }
+
+        foreach ($constructor->getParameters() as $parameter) {
+            $type = (string)  $parameter->getType();
+            // 每一個得到的type class在執行一次得到當沒有$constructor === null將會new class
+            $dependencies[] = $this->getObject($type);
+        }
+
+
+       return new $class_name(...$dependencies);
     }
 }
