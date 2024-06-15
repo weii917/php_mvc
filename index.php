@@ -7,6 +7,11 @@ declare(strict_types=1);
 spl_autoload_register(function (string $class_name) {
     require "src/" . str_replace("\\", "/", $class_name) . ".php";
 });
+
+$dotenv = new Framework\Dotenv;
+
+$dotenv->load(".env");
+
 // 因使用static所以使用::來取得function
 set_error_handler("Framework\ErrorHandler::handleError");
 
