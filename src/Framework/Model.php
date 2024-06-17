@@ -9,6 +9,7 @@ use App\Database;
 abstract class Model
 {
 
+    protected $table;
     public function __construct(private Database $database)
     {
     }
@@ -16,6 +17,10 @@ abstract class Model
     {
 
         $pdo = $this->database->getConnection();
+
+        $sql = "SELECT *
+                FROM {$this->table}";
+
         $stmt = $pdo->query("SELECT * FROM product");
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -25,7 +30,7 @@ abstract class Model
     {
         $conn = $this->database->getConnection();
         $sql = "SELECT *
-                FROM product
+                FROM {$this->table}
                 WHERE id = :id";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
