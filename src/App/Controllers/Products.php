@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controllers;
 // 如果確定再根目錄前方無須\，使用use載入class就能使用該class
 use App\Models\Product;
+// 加入異常類別
+use Framework\Exceptions\PageNotFoundException;
 use Framework\Viewer;
 
 class Products
@@ -32,6 +34,10 @@ class Products
     {
         $product = $this->model->find($id);
         // print_r($product);
+        if ($product === false) {
+            throw new PageNotFoundException("Product not Found");
+        }
+
         echo $this->viewer->render("shared/header.php", [
             "title" => "Product"
         ]);
