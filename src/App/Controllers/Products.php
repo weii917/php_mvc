@@ -51,4 +51,23 @@ class Products
     {
         echo $title . " " . $id . " " . $page;
     }
+
+    public function new()
+    {
+        echo $this->viewer->render("shared/header.php", [
+            "title" => "New Product"
+        ]);
+
+        echo $this->viewer->render("Products/new.php");
+    }
+
+    public function create()
+    {
+        $data = [
+            "name" => $_POST["name"],
+            "description" => $_POST["description"]
+        ];
+
+        var_dump($this->model->insert($data));
+    }
 }
