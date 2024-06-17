@@ -30,14 +30,14 @@ class Products
 
     public function show(string $id)
     {
-
-
+        $product = $this->model->find($id);
+        // print_r($product);
         echo $this->viewer->render("shared/header.php", [
             "title" => "Product"
         ]);
 
         echo $this->viewer->render("Products/show.php", [
-            "id" => $id
+            "product" => $product
         ]);
     }
 
