@@ -18,7 +18,7 @@ class Products
     {
         // 同個底下需再加\從根目錄開始查找
 
-        $products = $this->model->getData();
+        $products = $this->model->findAll();
 
 
         echo $this->viewer->render("shared/header.php", [
