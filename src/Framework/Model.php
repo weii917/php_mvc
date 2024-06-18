@@ -23,6 +23,16 @@ abstract class Model
 
     protected array $errors = [];
 
+    public function update(string $id, array $data): bool
+    {
+        $this->validate($data);
+
+        if (!empty($this->errors)) {
+            return false;
+        }
+
+        return true;
+    }
     protected function addError(string $field, string $message): void
     {
         $this->errors[$field] = $message;
