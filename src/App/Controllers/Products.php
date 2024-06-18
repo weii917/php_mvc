@@ -69,13 +69,16 @@ class Products
         ];
 
         if ($this->model->insert($data)) {
-            echo "record saved.";
+
+            header("Location: /products/{$this->model->getInsertID()}/show");
+            exit;
         } else {
+
             echo $this->viewer->render("shared/header.php", [
                 "title" => "New Product"
             ]);
 
-            echo $this->viewer->render("Products/new.php",[
+            echo $this->viewer->render("Products/new.php", [
                 "errors" => $this->model->getErrors()
             ]);
         }

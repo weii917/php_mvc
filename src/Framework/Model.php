@@ -14,6 +14,13 @@ abstract class Model
     protected function validate(array $data): void
     {
     }
+
+    public function getInsertID(): string
+    {
+        $conn = $this->database->getConnection();
+        return $conn->lastInsertId();
+    }
+
     protected array $errors = [];
 
     protected function addError(string $field, string $message): void

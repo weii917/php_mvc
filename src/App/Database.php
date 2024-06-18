@@ -6,6 +6,7 @@ use PDO;
 
 class Database
 {
+    private ?PDO $pdo = null;
 
     public function __construct(
         private string|int $host,
@@ -17,9 +18,13 @@ class Database
     }
     public function getConnection(): PDO
     {
-        $dsn = "mysql:host=localhost;dbname=product_db;charset=utf8;port=3306";
-        return new PDO($dsn, "product_db_user", "secret", [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-        ]);
+        if ($this->pdo === null) {
+            $dsn = "mysql:host=localhost;dbname=product_db;charset=utf8;port=3306";
+            $this->pdo = new PDO($dsn, "product_db_user", "secret", [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            ]);
+        }
+
+        return $this->pdo;
     }
 }
