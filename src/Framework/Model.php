@@ -11,6 +11,21 @@ abstract class Model
 
     protected $table;
 
+    protected function validate(array $data): void
+    {
+    }
+    protected array $errors = [];
+
+    protected function addError(string $field, string $message): void
+    {
+        $this->errors[$field] = $message;
+    }
+
+    public function getErrors(): array
+    {
+        return $this->errors;
+    }
+
     private function getTable(): string
     {
         if ($this->table !== null) {
@@ -52,7 +67,9 @@ abstract class Model
     public function insert(array $data): bool
     {
 
-        if (!$this->validate($data)) {
+        $this->validate($data);
+
+        if (!empty($this->errors)) {
             return false;
         }
         // 取得$data key = table column
