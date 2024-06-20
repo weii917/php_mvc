@@ -82,7 +82,7 @@ abstract class Model
         $parts = explode("\\", $this::class);
         return strtolower(array_pop($parts));
     }
-    public function __construct(private Database $database)
+    public function __construct(protected Database $database)
     {
     }
     public function findAll(): array
@@ -141,6 +141,19 @@ abstract class Model
             };
             $stmt->bindValue($i++, $value, $type);
         }
+
+        return $stmt->execute();
+    }
+
+    public function delete(string $id): bool
+    {
+        $sql = "DELETE FROM {$this->getTable()}
+                WHERE id = :id";
+        $conn = $this->database->getConnection();
+
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
 
         return $stmt->execute();
     }

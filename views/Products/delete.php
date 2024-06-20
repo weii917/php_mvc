@@ -2,9 +2,9 @@
 
 <form action="/products/<?= $product["id"] ?>/delete" method="post">
 
-<p>Delete this product?</p>
+    <p>Delete this product?</p>
 
-<button>Delete</button>
+    <button>Yes</button>
 </form>
 
 <p><a href="/products/<?= $product["id"] ?>/show">Cancel</a></p>
