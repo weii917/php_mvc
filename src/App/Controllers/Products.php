@@ -32,11 +32,7 @@ class Products
 
     public function show(string $id)
     {
-        $product = $this->model->find($id);
-        // print_r($product);
-        if ($product === false) {
-            throw new PageNotFoundException("Product not Found");
-        }
+        $product = $this->getProduct($id);
 
         echo $this->viewer->render("shared/header.php", [
             "title" => "Product"
@@ -49,11 +45,7 @@ class Products
 
     public function edit(string $id)
     {
-        $product = $this->model->find($id);
-        // print_r($product);
-        if ($product === false) {
-            throw new PageNotFoundException("Product not Found");
-        }
+        $product = $this->getProduct($id);
 
         echo $this->viewer->render("shared/header.php", [
             "title" => "Edit Product"
@@ -69,6 +61,16 @@ class Products
         echo $title . " " . $id . " " . $page;
     }
 
+    private function getProduct(string $id): array
+    {
+        $product = $this->model->find($id);
+        // print_r($product);
+        if ($product === false) {
+            throw new PageNotFoundException("Product not Found");
+        }
+
+        return $product;
+    }
     public function new()
     {
         echo $this->viewer->render("shared/header.php", [
@@ -107,12 +109,7 @@ class Products
     public function update(string $id)
     {
 
-        $product = $this->model->find($id);
-        // print_r($product);
-        if ($product === false) {
-            throw new PageNotFoundException("Product not Found");
-        }
-
+        $product = $this->getProduct($id);
 
         $product["name"] = $_POST["name"];
         $product["description"] = empty($_POST["description"]) ? null : $_POST["description"];
@@ -135,5 +132,18 @@ class Products
         }
 
         // print_r($this->model->getErrors());
+    }
+
+    public function delete(string $id)
+    {
+        $product = $this->getProduct($id);
+
+        echo $this->viewer->render("shared/header.php", [
+            "title" => "Delete Product"
+        ]);
+
+        echo $this->viewer->render("Products/delete.php", [
+            "product" => $product
+        ]);
     }
 }
